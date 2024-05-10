@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script type="text/javascript" src="{{ url_for('static', filename='rng.js') }}"></script>
+<h3 class="title is-3">Lottery Web Application Admin</h3>
+<h4 class="subtitle is-4">
+    Welcome, {{ name }}
+</h4>
+
+
+<div class="column is-4 is-offset-4">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <h4 class="title is-4">Lottery</h4>
+    <div class="box">
+        {# render play again button if current lottery round has been played #}
+        <form action="/generate_winning_draw">
+            <div>
+                <button class="button is-info is-centered">Generate Winning Draw</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="column is-4 is-offset-4">
+
+    <div class="box">
+        {% if winning_draw %}
+            <div class="field">
+                <p>Round {{ winning_draw.lottery_round }}</p>
+                <p>{{ winning_draw.numbers }}</p>
+            </div>
+        {% endif %}
+        <form action="/view_winning_draw">
+            <div>
+                <button class="button is-info is-centered">View Winning Draw</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="column is-8 is-offset-2">
+
+    <div class="box">
+        {% if results %}
+            <div class="field">
+                {% for result in results %}
+                    <p>{{ result }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form action="/run_lottery">
+            <div>
+                <button class="button is-info is-centered">Run Lottery</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="column is-10 is-offset-1">
+
+
+    <h4 class="title is-4">Current Users</h4>
+    <div class="box">
+        {% if current_users %}
+            <div class="field">
+                <table class="table">
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Phone No.</th>
+                        <th>Date of Birth</th>
+                        <th>Postcode</th>
+                        <th>Role</th>
+                    </tr>
+                    {% for user in current_users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.firstname }}</td>
+                            <td>{{ user.lastname }}</td>
+                            <td>{{ user.phone }}</td>
+                            <td>{{ user.birthdate }}</td>
+                            <td>{{ user.postcode }}</td>
+                            <td>{{ user.role }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+        <form action="/view_all_users">
+            <div>
+                <button class="button is-info is-centered">View All Users</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="column is-8 is-offset-2" id="test">
+    <h4 class="title is-4">Security Logs</h4>
+    <div class="box">
+        {% if logs %}
+            <div class="field">
+            <table class="table">
+                <tr>
+                    <th>Last 10 Security Log Entries</th>
+                </tr>
+                {% for entry in logs %}
+                    <tr>
+                        <td>{{ entry }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        <form action="/logs">
+            <div>
+                <button class="button is-info is-centered">View Logs</button>
+            </div>
+        </form>
+        </div>
+    </div>
+<div class="column is-8 is-offset-2" id="test">
+        <h4 class="title is-4">Register Admin</h4>
+        <div class="box">
+            <form action="/register_admin">
+                <div>
+                    <button class="button is-info is-centered">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="column is-10 is-offset-1" id="test">
+        <h4 class="title is-4">User Activity Logs</h4>
+        <div class="box">
+            {% if content %}
+                <div class="field">
+                <table class="table">
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Registration time</th>
+                        <th>Current login</th>
+                        <th>Previous login</th>
+                        <th>Current IP</th>
+                        <th>Previous IP</th>
+                        <th>Successful logins</th>
+
+                    </tr>
+                    {% for user in content %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.registered_on }}</td>
+                            <td>{{ user.current_login }}</td>
+                            <td>{{ user.last_login }}</td>
+                            <td>{{ user.current_ip }}</td>
+                            <td>{{ user.last_ip }}</td>
+                            <td>{{ user.login_count }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <form method="POST" action="/view_all_activity">
+                <div>
+                    <button class="button is-info is-centered">View User Activity</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

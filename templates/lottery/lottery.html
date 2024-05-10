@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script type="text/javascript" src="{{ url_for('static', filename='rng.js') }}"></script>
+    <h3 class="title is-3">Lottery</h3>
+
+    <h4 class="subtitle is-4">
+        Welcome, {{ name }}
+    </h4>
+
+    <div class="column is-8 is-offset-2">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="notification is-danger">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <h4 class="title is-4">Create Draw</h4>
+        <div class="box">
+            {% if form %}
+            <form method="POST">
+                <div class="columns is-multiline is-centered">
+                    {{ form.csrf_token() }}
+                    <div class="column is-one-sixth">
+                        {{ form.number1(class="input", placeholder="No. 1") }}
+                    </div>
+                    <div class="column is-one-sixth">
+                        {{ form.number2(class="input", placeholder="No. 2") }}
+                    </div>
+                    <div class="column is-one-sixth">
+                        {{ form.number3(class="input", placeholder="No. 3") }}
+                    </div>
+                    <div class="column is-one-sixth">
+                        {{ form.number4(class="input", placeholder="No. 4") }}
+                    </div>
+                    <div class="column is-one-sixth">
+                        {{ form.number5(class="input", placeholder="No. 5") }}
+                    </div>
+                    <div class="column is-one-sixth">
+                        {{ form.number6(class="input", placeholder="No. 6") }}
+                    </div>
+                </div>
+                <div class="field">
+                    <button type="button" class="button is-info is-centered" onclick="luckyDip()">Lucky
+                        Dip
+                    </button>
+                </div>
+                <div class="field">
+                    {{ form.submit(class="button is-info is-centered") }}
+                </div>
+            </form>
+            {% else %}
+                {# render play again button if current lottery round has been played #}
+                <form method="POST" action="/create_draw">
+                    <div>
+                        <button class="button is-info is-centered">Create New Draw</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="column is-4 is-offset-4">
+        <h4 class="title is-4">Playable Draws</h4>
+        <div class="box">
+            {% if playable_draws %}
+                <div class="field">
+
+                    {# render playable draws #}
+                    {% for draw in playable_draws %}
+                        <p>{{ draw.numbers }}</p>
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+            <form method="POST" action="/view_draws">
+                <div>
+                    <button class="button is-info is-centered">View Playable Draws</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="column is-6 is-offset-3">
+        <h4 class="title is-4">Play Lottery</h4>
+        <div class="box">
+            {% if results %}
+                <div class="field">
+                    <table class="table">
+                        <tr>
+                            <th>Round</th>
+                            <th>Draw</th>
+                            <th>Played</th>
+                            <th>Match</th>
+                        </tr>
+
+                        {# render results #}
+                        {% for draw in results %}
+                            <tr>
+                                <td>{{ draw.lottery_round }}</td>
+                                <td>{{ draw.numbers }}</td>
+                                <td>{{ draw.been_played }}</td>
+                                {% if draw.matches_master %}
+                                    <td style="background-color: yellow">{{ draw.matches_master }}</td>
+                                {% else %}
+                                    <td>{{ draw.matches_master }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+
+            {# render check result button if current lottery round not played #}
+            {% if not played %}
+                <form method="POST" action="/check_draws">
+                    <div>
+                        <button class="button is-info is-centered">Check Result</button>
+                    </div>
+                </form>
+            {% else %}
+                {# render play again button if current lottery round has been played #}
+                <form method="POST" action="/play_again">
+                    <div>
+                        <button class="button is-info is-centered">Play Again</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
